@@ -251,7 +251,6 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
         }
         closedir( $handle );
     }
-	sort($all);
     
     // show and empty the first one that is not empty
 	for($x = 0; $x < count ( $all ); $x ++) {
@@ -260,19 +259,19 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
             continue;
         }
         
-        $tmp = fopen($filename, 'c+b');
-        flock($tmp, LOCK_SH);
-        echo 'data: ', fread($tmp, filesize($filename)),PHP_EOL,PHP_EOL;
-        ftruncate($tmp, 0);
-        flock($tmp, LOCK_UN);
-        fclose($tmp);
+        $file = fopen($filename, 'c+b');
+        flock($file, LOCK_SH);
+        echo 'data: ', fread($file, filesize($filename)),PHP_EOL;
+        ftruncate($file, 0);
+        fflush($file);
+        flock($file, LOCK_UN);
+        fclose($file);
         break;
 	}
-
+    echo 'retry: 1000',PHP_EOL,PHP_EOL; // shorten the 3 seconds to 1 sec
 
 }
 
 // TODO: look at this one, might demonstrate slightly better: 
 // https://shanetully.com/2014/09/a-dead-simple-webrtc-example/
-
 
