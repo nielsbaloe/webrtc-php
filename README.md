@@ -5,11 +5,16 @@ WebRTC is nice, but impossible to test out if you just have a normal hosted PHP 
 
 My intention is to keep it as simple as possible, so that you can use it as a startpoint for your own application or just to try out some webRtc stuff. Maybe I will even simplify it some more if I have the time. It is just one file divided in three parts: the client (browser), the server for ajax posts which writes received data to a file, and the server for sending EventSource messages which are read from a file.
 
-I am using EventSource instead of a websocket, which actually works in all browsers including mobile browsers (except IE/Edge but I use a polyfill for that). With EventSource, the browser automaticly request the server for new data once every few seconds with a normal HTTP request. Because "a few seconds" is "long", I wrote the eventsource.onmessage in a way that it can receive multiple messages in one call. EventSource is syntacticly similar to WebSocket, but it has no send() method to send data to the server - for that I use a plain AJAX xmlHttpRequest. On the serverside, plain files are used for storage of data that is received on the server side but not yet sended to other users.
 
 Currently this works when two users load the same URL in their browser. I use this to communicate with my girlfriend, we both know an unique URL. As far as I know there is no restriction that this can work for a groupchat, however this handshake should be between every pair, and you have to add javascript to show all the streams on screen.
 
 I intentionally left out any "room" functionality, but if you search for 'room' you can see that it is as easy as extending the file with a room name (be sure to heavily secure the room name if the room name comes directly as url parameter from the browser, it will be a very huge security leak if you don't).
+
+## No Websocket?
+
+I am using EventSource instead of a websocket, which actually works in all browsers including mobile browsers (except IE/Edge but I use a polyfill for that). With EventSource, the browser automaticly request the server for new data once every few seconds with a normal HTTP request. Because "a few seconds" is "long", I wrote the eventsource.onmessage in a way that it can receive multiple messages in one call.
+
+EventSource is syntacticly similar to WebSocket, but it has no send() method to send data to the server - for that I use a plain AJAX xmlHttpRequest. On the serverside, plain files are used for storage of data that is received on the server side but not yet sended to other users.
 
 ## Usage
 
