@@ -9,6 +9,8 @@ I am using EventSource instead of a websocket, which actually works in all brows
 
 Currently this works when two users load the same URL in their browser. I use this to communicate with my girlfriend, we both know an unique URL. As far as I know there is no restriction that this can work for a groupchat, however this handshake should be between every pair, and you have to add javascript to show all the streams on screen.
 
+I intentionally left out any "room" functionality, but if you search for 'room' you can see that it is as easy as extending the file with a room name (be sure to secure the room name heavily, it will be a huge security leak if you don't).
+
 ## Usage
 
 To install, just place the file in a folder, and you might need to chmod the directory to writable (two files will be created) too. You also need to empty the folder once in a while, it will be stuffed with empty files - the reason for this is that I can not delete the file just after I have read it out, since the PHP locking mechanism works only when you have a file opened. If you'd use a database instead of a file, this problem would not arise, however for demonstration purposes I want to keep the code as simple as possible. Be sure to hit F12 to look at the javascript console and see what is going on.
