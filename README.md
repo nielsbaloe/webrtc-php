@@ -1,7 +1,7 @@
 # webrtc-php
-WebRTC without websockets with pure cheap PHP
+WebRTC with PHP without websockets
 
-WebRTC is nice, but impossible to test out if you just have a normal hosted PHP server (which means no websockets), and no time/money/energy to hire a webserver with commandline access to use node.js. So, here is an example of webRtc with just using plain old PHP.
+WebRTC is nice, but impossible to test out if you just have a normal hosted PHP server (which means no websockets), and no time/money/energy to hire a webserver with commandline access to use node.js or Java or a PHP websocket framework. So, here is an example of webRtc with just using plain old cheaply-available PHP.
 
 My intention is to keep it as simple as possible, so that you can use it as a startpoint for your own application or just to try out some webRtc stuff. Maybe I will even simplify it some more if I have the time. It is just one file divided in three parts: the client (browser), the server for ajax posts which writes received data to a file, and the server for sending EventSource messages which are read from a file.
 
@@ -9,4 +9,4 @@ I am using EventSource instead of a websocket, which actually works in all brows
 
 Currently this works when two users load the same URL in their browser. I use this to communicate with my girlfriend, we both know an unique URL. As far as I know there is no restriction that this can work for a groupchat, however this handshake should be between every pair, and you have to add javascript to show all the streams on screen.
 
-To install, you might need to chmod the directory to writable (two files will be created). And, you need to empty the folder once in a while, it will be stuffed with empty files - the reason for this is that I can not delete the file just after I have read it out, since the PHP locking mechanism works only when you have a file opened. If you'd use a database instead of a file, this problem would not arise, however for demonstration purposes this does not mater.
+To install, just place the file in a folder, and you might need to chmod the directory to writable (two files will be created) too. You also need to empty the folder once in a while, it will be stuffed with empty files - the reason for this is that I can not delete the file just after I have read it out, since the PHP locking mechanism works only when you have a file opened. If you'd use a database instead of a file, this problem would not arise, however for demonstration purposes that would only complicate the code.
