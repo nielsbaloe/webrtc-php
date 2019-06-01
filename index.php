@@ -214,7 +214,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 	// session (like tabs in the same browser at the same computer)
 	// will clash. This does never happen in practice, although when testing 
 	// on one computer, you have to use two different browsers.
-    $filename = '_file_'.session_id(); // .$_GET['room'];
+    $filename = '_file_' /* .$room */ .session_id();
     
     $posted=file_get_contents('php://input');
 
@@ -222,7 +222,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 	$file = fopen($filename,'ab');
 	flock($file,LOCK_EX);
 	if (filesize($filename)!=0) {
-		fwrite($file,"_MULTIPLEVENTS_");
+		fwrite($file,'_MULTIPLEVENTS_');
 	}
   	fwrite($file,$posted);
 	fflush($file);
@@ -244,7 +244,8 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
     $handle = opendir ( '../'.basename ( dirname ( __FILE__ ) ) );
     if ($handle !== false) {
         while ( false !== ($filename = readdir ( $handle )) ) {
-            if (startsWith($filename,'_file_') && !(startsWith($filename,'_file_'.session_id()))) {
+            if (startsWith($filename,'_file_' /* .$room */) 
+			&& !(startsWith($filename,'_file_' /*.$room*/ .session_id()))) {
                 $all [] .= $filename;
             }
         }
