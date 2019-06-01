@@ -12,10 +12,15 @@ I intentionally left out any "room" functionality, but if you search for 'room' 
 
 ## No Websocket?
 
-I am using EventSource instead of a websocket, which actually works in all browsers including mobile browsers (except IE/Edge but I use a polyfill for that). With EventSource, the browser automaticly request the server for new data once every few seconds with a normal HTTP request. Because "a few seconds" is "long", I wrote the eventsource.onmessage in a way that it can receive multiple messages in one call.
+The websocket is only for handshaking, so webRTC does not need a websocket. You can also do a handshake by e-mail if you want.
+
+I am using EventSource instead of a websocket, which actually works in all browsers including mobile browsers (except IE/Edge but I use a polyfill for that). With EventSource, the browser automaticly request the server for new data once every few seconds with a normal HTTP request. Because "a few seconds" is "long", I wrote the eventsource.onmessage in a way that it can receive multiple messages in one call. It works perfectly, but due to the "few seconds" the handshake takes a bit longer.
 
 EventSource is syntacticly similar to WebSocket, but it has no send() method to send data to the server - for that I use a plain AJAX xmlHttpRequest. On the serverside, plain files are used for storage of data that is received on the server side but not yet sended to other users.
 
 ## Usage
 
-To install, just place the file in a folder, and you might need to chmod the directory to writable (two files will be created) too. You also need to empty the folder once in a while, it will be stuffed with empty files - the reason for this is that I can not delete the file just after I have read it out, since the PHP locking mechanism works only when you have a file opened. If you'd use a database instead of a file, this problem would not arise, however for demonstration purposes I want to keep the code as simple as possible. Be sure to hit F12 to look at the javascript console and see what is going on.
+To install, just place the file in a folder, and you might need to "chmod" the directory to writable (two files will be created) too. Be sure to hit F12 to look at the javascript console and see what is going on.
+
+You also need to empty the folder once in a while, it will be stuffed with empty files. The reason for this is that I can not delete the file just after I have read it out, since the PHP locking mechanism works only when you have a file opened. If you'd use a database instead of a file, this problem would not arise, however for demonstration purposes I want to keep the code as simple as possible. 
+
