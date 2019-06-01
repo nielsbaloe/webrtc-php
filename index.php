@@ -7,7 +7,7 @@
 session_start();
 
 // Websocket-hack: 'eventsource' in the URL is used to distinguish 
-// the HTML form the real eventsource calls
+// the HTML from the real eventsource calls
 if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
     ?><!DOCTYPE html>
     <html>
@@ -65,7 +65,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
             localVideo.srcObject = stream;
             localStream = stream;
 
-			ws = new EventSource(URL);
+		ws = new EventSource(URL);
             
             // Websocket-hack: EventSource does not have a 'send()'
             // so I use an ajax-xmlHttpRequest for posting data
@@ -85,7 +85,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 			}
 
 
-			// Websocket-hack: onmessage is extended for receiving 
+		// Websocket-hack: onmessage is extended for receiving 
             // multiple events at once for speed, because the polling 
             // frequency of EventSource is just once every few seconds.
 			ws.onmessage = function(e) {
@@ -205,7 +205,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 <?php
 } else if (count($_POST)!=0) { // simulated onmessage by ajax post
 
-    // Websocket-hack: note that clients that connect with the same
+	// Websocket-hack: note that clients that connect with the same
 	// session (like tabs in the same browser at the same computer)
 	// will clash. This does never happen in practice, although when testing 
 	// on one computer, you have to use two different browsers.
