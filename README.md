@@ -9,7 +9,7 @@ I am using EventSource instead of a websocket, which actually works in all brows
 
 Currently this works when two users load the same URL in their browser. I use this to communicate with my girlfriend, we both know an unique URL. As far as I know there is no restriction that this can work for a groupchat, however this handshake should be between every pair, and you have to add javascript to show all the streams on screen.
 
-I intentionally left out any "room" functionality, but if you search for 'room' you can see that it is as easy as extending the file with a room name (be sure to secure the room name heavily, it will be a huge security leak if you don't).
+I intentionally left out any "room" functionality, but if you search for 'room' you can see that it is as easy as extending the file with a room name (be sure to heavily secure the room name if the room name comes directly as url parameter from the browser, it will be a very huge security leak if you don't).
 
 ## Usage
 
