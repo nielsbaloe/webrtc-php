@@ -16,7 +16,7 @@ The websocket is only for handshaking, so webRTC does not need a websocket. You 
 
 I am using EventSource instead of a websocket, which actually works in all browsers including mobile browsers (except IE/Edge but I use a polyfill for that). With EventSource, the browser automaticly request the server for new data once every few seconds with a normal HTTP request. Because "a few seconds" is "long", I wrote the eventsource.onmessage in a way that it can receive multiple messages in one call. It works perfectly, but due to the "few seconds" the handshake takes a bit longer.
 
-EventSource is syntacticly similar to WebSocket, but it has no send() method to send data to the server - for that I use a plain AJAX xmlHttpRequest. On the serverside, plain files are used for storage of data that is received on the server side but not yet sended to other users.
+EventSource is syntacticly equal to WebSocket, except that there is no send() method to send data back to the server - for that I use a plain AJAX xmlHttpRequest. On the serverside, plain files are used for storage of data that is received on the server side but not yet sended to other users.
 
 ## Usage
 
