@@ -1,19 +1,21 @@
 <?php
 
-// TODO: look at // todo: https://shanetully.com/2014/09/a-dead-simple-webrtc-example/
-
 // Session-cookies are used to generate an unique ID (at the server)
-// to identify the user. This command starts the session for session cookies.
+// to identify the user. With websockets there is no need for unique IDs, 
+// you just save the sockets itsself.
 session_start();
 
-// Websocket-hack: 'eventsource' in the URL is used to distinguish 
-// the HTML from the real eventsource calls
+// 'eventsource' in the URL is used to distinguish 
+// the HTML from the real eventsource calls in this single file.
 if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
     ?><!DOCTYPE html>
     <html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+        
+        <!-- EventSource polyfill for IE and Edge -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/event-source-polyfill/0.0.9/eventsource.js"></script>
         <style>
         body {
             margin: 0;
@@ -40,10 +42,10 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 
     var answer = 0;
     var pc=null
-	var	localStream=null;
+	var localStream=null;
 	var ws=null;
 
-    // Websocket-hack: 'eventsource' parameter is used to distinguish 
+    // 'eventsource' parameter is used to distinguish 
     // the HTML form the real eventsource calls
     var URL = 'index.php?eventSource=yes';
     var localVideo = document.getElementById('localVideo');
@@ -59,14 +61,18 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 
 	// Start
     navigator.mediaDevices.getUserMedia({
-            //audio: true,
+            // audio: true, // I work on a Raspbian, which has troubles with the audio, enable for audio
             video: true
         }).then(function (stream) {
             localVideo.srcObject = stream;
             localStream = stream;
 
-		ws = new EventSource(URL);
-            
+            try {
+                ws = new EventSource(URL);
+            } catch(e) {
+                console.error("Could not create eventSource ",e);
+            }
+
             // Websocket-hack: EventSource does not have a 'send()'
             // so I use an ajax-xmlHttpRequest for posting data
 			ws.send = function send(message) {
@@ -83,7 +89,6 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 				 xhttp.setRequestHeader("Content-Type","Application/X-Www-Form-Urlencoded");
 				 xhttp.send(message);
 			}
-
 
 		// Websocket-hack: onmessage is extended for receiving 
             // multiple events at once for speed, because the polling 
@@ -107,7 +112,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
             );
 			
         }).catch(function (e) {
-            console.log("Problem while getting audio video stuff "+e);
+            console.log("Problem while getting audio video stuff ",e);
         });
 		
     
@@ -139,7 +144,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
                     console.error('Before processing the client-answer, I need a client-offer');
                 }
                 pc.setRemoteDescription(new RTCSessionDescription(data),function(){}, function(e){
-                    console.log("Problem while doing client-answer: "+e);
+                    console.log("Problem while doing client-answer: ",e);
                 });
                 break;
             case 'client-offer':
@@ -150,16 +155,16 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
                                 pc.setLocalDescription(desc, function () {
                                     publish('client-answer', pc.localDescription);
                                 }, function(e){
-                                    console.log("Problem getting client answer"+e);
+                                    console.log("Problem getting client answer: ",e);
                                 });
                             }
                         ,function(e){
-                            console.log("Problem while doing client-offer: "+e);
+                            console.log("Problem while doing client-offer: ",e);
                         });
                         answer = 1;
                     }
                 }, function(e){
-                    console.log("Problem while doing client-offer2: "+e);
+                    console.log("Problem while doing client-offer2: ",e);
                 });
                 break;
             case 'client-candidate':
@@ -175,7 +180,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
                 publish('client-candidate', event.candidate);
             }
         };
-        try{
+        try {
             pc.addStream(localStream);
         }catch(e){
             var tracks = localStream.getTracks();
@@ -215,10 +220,10 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 
     // add the new message to file
 	$file = fopen($filename,'ab');
-    flock($file,LOCK_EX);
-    if (filesize($filename)!=0) {
-        fwrite($file,"_MULTIPLEVENTS_");
-    }
+	flock($file,LOCK_EX);
+	if (filesize($filename)!=0) {
+		fwrite($file,"_MULTIPLEVENTS_");
+	}
   	fwrite($file,$posted);
 	fflush($file);
 	flock($file,LOCK_UN);
@@ -265,3 +270,8 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 
 
 }
+
+// TODO: look at this one, might demonstrate slightly better: 
+// https://shanetully.com/2014/09/a-dead-simple-webrtc-example/
+
+
