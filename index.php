@@ -20,24 +20,13 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
         }
         .videos {
             height: 100%;
-            pointer-events: none;
-            position: absolute;
             width: 100%;
         }
-        #localVideo {
+        #localVideo, #remoteVideo {
             height: 100%;
             max-height: 100%;
             max-width: 100%;
             object-fit: cover;
-            width: 100%;
-        }
-        #remoteVideo {
-            display: block;
-            height: 100%;
-            max-height: 100%;
-            max-width: 100%;
-            object-fit: cover;
-            position: absolute;
             width: 100%;
         }
         </style>
@@ -97,7 +86,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 
 
 			// Websocket-hack: onmessage is extended for receiving 
-            // multiple events at once for speed, becase the polling 
+            // multiple events at once for speed, because the polling 
             // frequency of EventSource is just once every few seconds.
 			ws.onmessage = function(e) {
 				if (e.data.includes("_MULTIPLEVENTS_")) {
@@ -116,7 +105,6 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
                     publish('client-call', null)
                 }
             );
-            
 			
         }).catch(function (e) {
             console.log("Problem while getting audio video stuff "+e);
@@ -217,13 +205,12 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 <?php
 } else if (count($_POST)!=0) { // simulated onmessage by ajax post
 
-    // Websocket-hack: note that clients that connect with the same ID
-	// and the same session (like tabs in the same browser at the same computer)
-	// will clash. This does never happen in practice, althoug when testing 
+    // Websocket-hack: note that clients that connect with the same
+	// session (like tabs in the same browser at the same computer)
+	// will clash. This does never happen in practice, although when testing 
 	// on one computer, you have to use two different browsers.
-	$me = $_GET['me'].session_id(); // .$_GET['room'];
-
-    $filename = '_file_'.$me;
+    $filename = '_file_'.session_id(); // .$_GET['room'];
+    
     $posted=file_get_contents('php://input');
 
     // add the new message to file
@@ -242,8 +229,6 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
     header('Content-Type: text/event-stream');
     header('Cache-Control: no-cache'); // recommended
 
-	$me = $_GET['me'].session_id(); // .$_GET['room'];
-
     function startsWith($haystack, $needle) {
         $length = strlen($needle);
         return (substr($haystack, 0, $length) === $needle);
@@ -254,7 +239,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
     $handle = opendir ( '../'.basename ( dirname ( __FILE__ ) ) );
     if ($handle !== false) {
         while ( false !== ($filename = readdir ( $handle )) ) {
-            if (startsWith($filename,'_file_') && !(startsWith($filename,'_file_'.$me))) {
+            if (startsWith($filename,'_file_') && !(startsWith($filename,'_file_'.session_id()))) {
                 $all [] .= $filename;
             }
         }
