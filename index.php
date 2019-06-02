@@ -4,9 +4,14 @@
 // to identify the user. With websockets there is no need for unique IDs, 
 // you just save the sockets itsself.
 session_start();
+if (!ctype_alnum(session_id()) || !preg_match('/^(?:[a-z0-9_-]|\.(?!\.))+$/iD', session_id())) {
+   die();
+}
+
 
 // 'eventsource' in the URL is used to distinguish 
 // the HTML from the real eventsource calls in this single file.
+// Everything is in one file, you know.
 if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
     ?><!DOCTYPE html>
     <html>
@@ -45,8 +50,8 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 	var localStream=null;
 	var ws=null;
 
-    // 'eventsource' parameter is used to distinguish 
-    // the HTML form the real eventsource calls
+    // 'eventsource' parameter is only used to distinguish 
+    // the HTML form the real eventsource calls.
     var URL = 'index.php?eventSource=yes';
     var localVideo = document.getElementById('localVideo');
     var remoteVideo = document.getElementById('remoteVideo');
@@ -92,7 +97,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 
 		// Websocket-hack: onmessage is extended for receiving 
             // multiple events at once for speed, because the polling 
-            // frequency of EventSource is just once every few seconds.
+            // frequency of EventSource is low.
 			ws.onmessage = function(e) {
 				if (e.data.includes("_MULTIPLEVENTS_")) {
 					multiple = e.data.split("_MULTIPLEVENTS_");
@@ -142,9 +147,10 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
             case 'client-answer':
                 if (pc==null) {
                     console.error('Before processing the client-answer, I need a client-offer');
+                    break;
                 }
-                pc.setRemoteDescription(new RTCSessionDescription(data),function(){}, function(e){
-                    console.log("Problem while doing client-answer: ",e);
+                pc.setRemoteDescription(new RTCSessionDescription(data),function(){}, 
+                    function(e) { console.log("Problem while doing client-answer: ",e);
                 });
                 break;
             case 'client-offer':
@@ -168,7 +174,12 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
                 });
                 break;
             case 'client-candidate':
-                pc.addIceCandidate(new RTCIceCandidate(data), function(){}, function(e){console.log("Problem adding ice candidate: "+e);});
+               if (pc==null) {
+                    console.error('Before processing the client-answer, I need a client-offer');
+                    break;
+                }
+                pc.addIceCandidate(new RTCIceCandidate(data), function(){}, 
+                    function(e) { console.log("Problem adding ice candidate: "+e);});
                 break;
         }
     };
@@ -210,24 +221,32 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 <?php
 } else if (count($_POST)!=0) { // simulated onmessage by ajax post
 
-	// Websocket-hack: note that clients that connect with the same
-	// session (like tabs in the same browser at the same computer)
+	// Note that browsers that connect with the same
+	// session (tabs in the same browser at the same computer)
 	// will clash. This does never happen in practice, although when testing 
-	// on one computer, you have to use two different browsers.
+	// on one computer, you have to use two different browsers, in order to 
+    // get a different result from session_id().
     $filename = '_file_' /* .$room */ .session_id();
-    
-    $posted=file_get_contents('php://input');
 
-    // add the new message to file
-	$file = fopen($filename,'ab');
-	flock($file,LOCK_EX);
+    $posted = file_get_contents('php://input');
+    
+    // A main lock on index.php, because otherwise we can not delete the
+    // file after reading its content (further down)
+	$mainlock = fopen('index.php','r');
+	flock($mainlock,LOCK_EX);
+   
+    // Add the new message to file
+    $file = fopen($filename,'ab');
 	if (filesize($filename)!=0) {
 		fwrite($file,'_MULTIPLEVENTS_');
 	}
   	fwrite($file,$posted);
-	fflush($file);
-	flock($file,LOCK_UN);
 	fclose($file);
+
+    // Unlock main lock
+    flock($mainlock,LOCK_UN);
+    fclose($mainlock);
+    
 
 } else { // regular eventSource poll which is loaded every few seconds
 
@@ -235,43 +254,54 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
     header('Cache-Control: no-cache'); // recommended
 
     function startsWith($haystack, $needle) {
-        $length = strlen($needle);
-        return (substr($haystack, 0, $length) === $needle);
+        return (substr($haystack, 0, strlen($needle) ) === $needle);
     }
-
-    // get filelist
+        
+    // Get a list of all files in the folder
 	$all = array ();
     $handle = opendir ( '../'.basename ( dirname ( __FILE__ ) ) );
     if ($handle !== false) {
         while ( false !== ($filename = readdir ( $handle )) ) {
             if (startsWith($filename,'_file_' /* .$room */) 
-			&& !(startsWith($filename,'_file_' /*.$room*/ .session_id()))) {
+                && !(startsWith($filename,'_file_' /*.$room*/ .session_id()))) {
                 $all [] .= $filename;
             }
         }
         closedir( $handle );
     }
     
+    // A main lock on index.php, because otherwise we can not delete the
+    // file after reading its content.
+    $mainlock = fopen('index.php','r');
+	flock($mainlock,LOCK_EX);
+    
     // show and empty the first one that is not empty
 	for($x = 0; $x < count ( $all ); $x ++) {
         $filename=$all[$x];
+        
+        // prevent sending empty files
         if (filesize($filename)==0) {
+            unlink($filename);
             continue;
         }
         
         $file = fopen($filename, 'c+b');
         flock($file, LOCK_SH);
         echo 'data: ', fread($file, filesize($filename)),PHP_EOL;
-        ftruncate($file, 0);
-        fflush($file);
-        flock($file, LOCK_UN);
         fclose($file);
+        unlink($filename);
         break;
 	}
+    
+    // Unlock main lock
+    flock($mainlock,LOCK_UN);
+    fclose($mainlock);
+    
     echo 'retry: 1000',PHP_EOL,PHP_EOL; // shorten the 3 seconds to 1 sec
 
 }
-
-// TODO: look at this one, might demonstrate slightly better: 
+// TODO:
+// - read all files from the folder, not just the first one
+// - look at this one, might demonstrate slightly better: 
 // https://shanetully.com/2014/09/a-dead-simple-webrtc-example/
 
