@@ -66,7 +66,7 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
 
 	// Start
     navigator.mediaDevices.getUserMedia({
-            // audio: true, // I work on a Raspbian, which has troubles with the audio, enable for audio
+            audio: true,
             video: true
         }).then(function (stream) {
             localVideo.srcObject = stream;
