@@ -16,12 +16,12 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
     ?><!DOCTYPE html>
     <html>
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
         
-        <!-- EventSource polyfill for IE and Edge -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/event-source-polyfill/0.0.9/eventsource.js"></script>
-        <style>
+	<!-- EventSource polyfill for IE and Edge -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/event-source-polyfill/0.0.9/eventsource.js"></script>
+	<style>
         body {
             margin: 0;
         }
@@ -40,8 +40,8 @@ if (!isset($_GET['eventSource'])) { // show HTML CSS and Javascript
     </head>
     <body>
     <div class="videos">
-        <video id="localVideo" autoplay></video>
-        <video id="remoteVideo" autoplay style="display:none"></video>
+        <video id="localVideo" autoplay="true" muted="muted"></video>
+        <video id="remoteVideo" autoplay="true" style="display:none"></video>
     </div>
     <script type="text/javascript">
 
