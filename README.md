@@ -6,7 +6,8 @@ My intention is to keep it as simple as possible, so that you can use it as a st
 
 Currently this works when two users load the same URL in their browser. I use this to communicate with my girlfriend, we both know an unique URL. As far as I know there is no restriction that this can work for more users too, although you have to figure that out yourself.
 
-I intentionally left out any "room" functionality, but if you search for 'room' you can see that it is as easy as extending the file with a room name (be sure to heavily secure the room name if the room name comes directly as url parameter from the browser, it will be a very huge security leak if you don't).
+I intentionally left out any "room" functionality, but if you search for 'room' you can see that on the serverside it already has some hints. You still have to work out the details though.
+The same goes for more than 2 computers, I never did that but here you see the principle. The serverside part of a group meeting is a lót easier with a regular websocket, but you cán get it working using this code.
 
 ## No Websocket?
 
