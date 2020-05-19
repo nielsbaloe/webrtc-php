@@ -1,8 +1,10 @@
 # webrtc-php
 
-WebRTC is nice, but impossible to test out if you just have a normal cheap shared-hosting PHP server (which means no websockets), and no time/money/energy to hire a webserver with commandline access to use node.js or Java or a PHP websocket framework. So, here is an example of webRtc with just using plain old cheaply-available PHP. And it works great!
+WebRTC is nice, but impossible to test out if you just have a normal cheap shared-hosting PHP server (which means no websockets), and no time/money/energy to hire a webserver with commandline access to use node.js or Java or a PHP websocket framework. So, here is an example of webRtc with just using plain old cheaply-available PHP. You do need a https server (with SSL), otherwise it will not work.
 
-My intention is to keep it as simple as possible, so that you can use it as a startpoint for your own application or just to try out some webRtc stuff. Maybe I will even simplify it some more if I have the time. It is just one file divided in three parts: the client (browser), the server for ajax posts which writes received data to a file, and the server for sending EventSource messages which are read from a file.
+My intention is to keep it as simple as possible, so that you can use it as a startpoint for your own application or just to try out some webRtc stuff. Maybe I will even simplify it some more if I have the time.
+
+It works great, however the WebRTC specs change a bit over time, and not all browsers keep up. It works really well in Chrome, and if you work with Firefox it works too, and it should work in other browsers too. For now it looks like WebRTC is too complex to simplify and let all browser builders implement this independently.
 
 Currently this works when two users load the same URL in their browser. I use this to communicate with my girlfriend, we both know an unique URL. As far as I know there is no restriction that this can work for more users too, although you have to figure that out yourself.
 
@@ -21,4 +23,4 @@ EventSource is syntacticly equal to WebSocket (so it is easy to move to websocke
 
 ## Usage
 
-To install, just place the file in a folder, and you need to "chmod" the directory to writable (two files will be created) too. Be sure to hit F12 to look at the javascript console and see what is going on.
+To install (on a https server), just place the file(s) in a folder, and you need to "chmod" the directory to writable (two files will be created) too. Be sure to hit F12 to look at the javascript console and see what is going on.
