@@ -1,20 +1,21 @@
 # webrtc-php
 
-WebRTC is nice, but impossible to test out if you just have a normal cheap shared-hosting PHP server (which means no websockets), and no time/money/energy to hire a webserver with commandline access to use node.js or Java or a PHP websocket framework. So, here is an example of webRtc with just using plain old cheaply-available PHP. You do need a https server (with SSL), otherwise it will not work.
+WebRTC is nice, but impossible to test out if you just have a normal cheap shared-hosting PHP server (which means no websockets), and no time/money/energy to hire a webserver with commandline access to use node.js or Java or a PHP websocket framework. So, here is an example of webRtc with just using plain old cheaply-available PHP. 
 
-My intention is to keep it as simple as possible, so that you can use it as a startpoint for your own application or just to try out some webRtc stuff. Maybe I will even simplify it some more if I have the time.
+#### You do need a https server with SSL, otherwise it will not work. It has to be on a real working certificate on a real server. Please please look carefully to all the errors and warnings in your Javascript console - do not ignore any of them.
 
-It works great, however the WebRTC specs change a bit over time, and not all browsers keep up. It works really well in Chrome, and if you work with Firefox it works too, and it should work in other browsers too. For now it looks like WebRTC is too complex to simplify and let all browser builders implement this independently. Please do not ask me any webRTC specific questions - not because I do not want to help you, but simply because I do not have much specific webRTC knowledge. Please test it with two Chrome browsers, that should work fine. I tested it with some Firefox browsers and some mobile phones too, it works most of the time. So again: please do not ask me any webRTC questions, I simply do not have the answers...
+My intention is to keep it as simple as possible, so that you can use it as a startpoint for your own application or just to try out some webRtc stuff. 
+
+It works great, however the WebRTC specs change a bit over time, and not all browsers keep up. Please do not ask me any webRTC specific questions - not because I do not want to help you, but simply because I do not have much specific webRTC knowledge. Please test it first with two Chrome browsers, that should work fine, and then start with testing other browsers. I tested it with some Firefox browsers and some mobile phones too, it works most of the time. 
+#### So again: please do not ask me any webRTC questions, I simply do not have the answers...
 
 Currently this works when two users load the same URL in their browser. I use this to communicate with my girlfriend, we both know an unique URL. As far as I know there is no restriction that this can work for more users too, although you have to figure that out yourself.
 
-I intentionally left out any "room" functionality (meaning: pairs of people can connect in seperate rooms), but if you search for 'room' you can see that on the serverside it already has some hints. You still have to work out the details though, only enabling the room variable will not be enough. And it will still work for just pairs of people, not for groups.
-
-The same goes for more than 2 computers, I never did that but here you see the principle to connect two clients. The serverside part of a group meeting is a lót easier with a regular websocket -you are warned- however you cán get it working using this code.
+I intentionally left out any "room" functionality (meaning: pairs of people can connect in seperate rooms), but if you search for 'room' you can see that on the serverside it already has some hints. You still have to work out the details though, only enabling the room variable will not be enough. And it will still work for just 2 people, not more.
 
 ## No Websocket?
 
-The "websocket" usually seen in webRTC is only for handshaking, but webRTC does not need a websocket at all. You can also do a handshake by e-mail if you want. Or by using dove.
+The "websocket" usually seen in webRTC is only for handshaking, but webRTC does not need a websocket at all. You can also do a handshake by e-mail if you want. Or by using a dove.
 
 I am using EventSource (or SSE, Server Side Events) instead of a websocket, which actually works in all browsers including mobile browsers (not in old browsers like IE; you could use a polyfill for that, but I removed the polyfill because it is now legally accepted to ignore IE). With EventSource, the browser automaticly request the server for new data with a normal HTTP request (or a HTTP2 socket) every few seconds.
 
