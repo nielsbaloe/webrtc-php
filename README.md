@@ -6,7 +6,7 @@ WebRTC is nice, but impossible to test out if you just have a normal cheap share
 
 My intention is to keep it as simple as possible, so that you can use it as a startpoint for your own application or just to try out some webRtc stuff. 
 
-It works great, however the WebRTC specs change a bit over time, and not all browsers keep up. Please do not ask me any webRTC specific questions - not because I do not want to help you, but simply because I do not have much specific webRTC knowledge. Please test it first with two Chrome browsers, that should work fine, and then start with testing other browsers. I tested it with some Firefox browsers and some mobile phones too, it works most of the time. 
+It works great, however the WebRTC specs change a bit over time, and not all browsers keep up. Please do not ask me any webRTC specific questions - not because I do not want to help you, but simply because I do not have much specific webRTC knowledge. Please test it first with two Chrome browsers, that should work fine, and then start with testing other browsers. I tested it with some Firefox browsers and some mobile phones too, it worked every time, although the handshakes were extremely difficult to follow.
 #### So again: please do not ask me any webRTC questions, I simply do not have the answers...
 
 Currently this works when two users load the same URL in their browser. I use this to communicate with my girlfriend, we both know an unique URL. As far as I know there is no restriction that this can work for more users too, although you have to figure that out yourself.
