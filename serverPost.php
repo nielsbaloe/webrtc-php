@@ -1,4 +1,4 @@
-<php?
+<?php
 
 // A unique identifier (not necessary when working with websockets)
 if (!isset($_GET['unique'])) {
