@@ -1,4 +1,4 @@
-<?
+<php?
 
 // A unique identifier (not necessary when working with websockets)
 if (!isset($_GET['unique'])) {
@@ -24,7 +24,7 @@ if (filesize($filename)!=0) {
     fwrite($file,'_MULTIPLEVENTS_');
 }
 $posted = file_get_contents('php://input');
-fwrite($file,$posted);
+fwrite($file,base64_encode($posted));
 fclose($file);
 
 // Unlock main lock
