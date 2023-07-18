@@ -56,7 +56,7 @@ if (count($all)!=0) {
 
 	$file = fopen($filename, 'c+b');
 	flock($file, LOCK_SH);
-	echo 'data: ', base64_dencode(fread($file, filesize($filename))), PHP_EOL;
+	echo 'data: ', base64_decode(fread($file, filesize($filename))), PHP_EOL;
 	fclose($file);
 	unlink($filename);
 	break;
