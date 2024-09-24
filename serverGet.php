@@ -1,4 +1,4 @@
-<?
+<?php
 
 // TODO:
 // - read all files from the folder, not just the first one
